@@ -1,3 +1,5 @@
+from typing import ReadOnly
+
 from cryptography.fernet import Fernet
 import os, time
 
@@ -19,7 +21,7 @@ class colors:
 
 def encrypt():
 
-    print(colors.OKBLUE +  "[!]" + colors.ENDC + "Entered Encryption Mode" + colors.OKBLUE +  "[!]" + colors.ENDC)
+    print(colors.WARNING +  "[!]" + colors.ENDC + " Entered Encryption Mode " + colors.WARNING +  "[!]" + colors.ENDC)
 
     # Find some files
     files = []
@@ -27,19 +29,26 @@ def encrypt():
     # Ask the directory to scan
     directory_path = str(input("Path of Folder to Encrypt" + colors.OKBLUE + " ->  " + colors.ENDC))
 
+    if os.path.isdir(str(directory_path)) == False:
+        print(colors.FAIL + "[!]" + colors.ENDC + " Error Getting Directory " + colors.FAIL + "[!]" + colors.ENDC)
+        exit()
+
     # Iterate through each item in the specified directory
     files_found = 0
-    print("Scanning...")
+    print(colors.WARNING + "[!]" + colors.ENDC + " Scanning... " + colors.WARNING +  "[!]" + colors.ENDC)
     for root, _, file_names in os.walk(directory_path):
         for file_name in file_names:
             file_path = os.path.join(root, file_name)
             files.append(file_path)
             files_found += 1
-            print(colors.OKBLUE + f"[{files_found}]" + colors.ENDC + f" {file_path}")
+            print(colors.OKBLUE + f"  [{files_found}]" + colors.ENDC + f" {file_path}")
 
-    print(f"Found " + colors.OKBLUE + str(files_found) + colors.ENDC + " file(s).")
+    print(colors.WARNING +  "[!]" + colors.ENDC + f" Found " + colors.OKBLUE + str(files_found) + colors.ENDC + " file(s). " + colors.WARNING +  "[!]" + colors.ENDC)
 
-    confirmiation = str(input("Do you want to continue? " + colors.OKBLUE + "All" + colors.ENDC + " the files in " + colors.OKBLUE + f"{directory_path}" + colors.ENDC + " will be encrypted. " + colors.OKBLUE + "[y/n] " + colors.ENDC))
+    if files_found > 1000:
+        print(colors.WARNING + "[!]" + colors.ENDC + " Over " + colors.OKBLUE + "1000" + colors.ENDC + " files found. Continue with caution. " + colors.WARNING + "[!]" + colors.ENDC)
+
+    confirmiation = str(input("Do you want to continue? " + colors.OKBLUE + "All" + colors.ENDC + " the " + colors.OKBLUE + f"{files_found}" + colors.ENDC +  " files in " + colors.OKBLUE + f"{directory_path}" + colors.ENDC + " will be encrypted. " + colors.OKBLUE + "[y/n] " + colors.ENDC))
 
     if confirmiation == "n":
         print(colors.FAIL + "Aborting..." + colors.ENDC)
@@ -53,10 +62,10 @@ def encrypt():
     with open("fernet_key.key", "wb") as thekey:
         thekey.write(key)
 
-    print("Fernet Key file generated. Located at [" + colors.OKBLUE + "./fernet_key.key" + colors.ENDC + "]")
+    print(colors.WARNING +  "[!]" + colors.ENDC + " Fernet Key file generated. Located at [" + colors.OKBLUE + "./fernet_key.key" + colors.ENDC + "] " + colors.WARNING +  "[!]" + colors.ENDC)
 
     time.sleep(1)
-    print(colors.OKBLUE + "[!]" + colors.ENDC + " Starting Encryption " + colors.OKBLUE + "[!]" + colors.ENDC)
+    print(colors.WARNING + "[!]" + colors.ENDC + " Starting Encryption " + colors.WARNING + "[!]" + colors.ENDC)
     time.sleep(1)
 
     # Iterate over each file and extract content for encryption
@@ -66,7 +75,7 @@ def encrypt():
             with open(file, "rb") as thefile:
                 # Save the contents of the file
                 print(
-                    colors.OKBLUE + f"[{file_count}]" + colors.ENDC + f" Starting Encryption on " + colors.OKBLUE + f"[{file}]" + colors.ENDC + " ")
+                    colors.OKBLUE + f"  [{file_count}]" + colors.ENDC + f" Starting Encryption on " + colors.OKBLUE + f"[{file}]" + colors.ENDC + " ")
                 contents = thefile.read()
 
             # Encrypt them
@@ -75,17 +84,21 @@ def encrypt():
             # Rewrite the encrypted content to the file
             with open(file, "wb") as thefile:
                 thefile.write(contents_encrypted)
-                print(colors.OKBLUE + f"[{file_count}]" + colors.ENDC + f" File " + colors.OKBLUE + f"[{file}]" + colors.ENDC + " Successfully Encrypted")
+                print(colors.OKBLUE + f"  [{file_count}]" + colors.ENDC + f" File " + colors.OKBLUE + f"[{file}]" + colors.ENDC + " Successfully Encrypted")
                 file_count += 1
 
         except PermissionError as e:
-            print(colors.FAIL + "[!]" + colors.ENDC + f" Failed to Encrypt " + colors.OKBLUE + f" [{file}]" + colors.ENDC + " -> Permission Error " + colors.FAIL + "[!]" + colors.ENDC)
+            print(colors.FAIL + "  [E]" + colors.ENDC + f" Failed to Encrypt " + colors.OKBLUE + f" [{file}]" + colors.ENDC + " -> Permission Error " + colors.FAIL + "[E]" + colors.ENDC)
+
+        except OSError as e:
+            print(colors.FAIL + "  [E]" + colors.ENDC + f" Failed to Encrypt " + colors.OKBLUE + f" [{file}]" + colors.ENDC + " -> Read-only File/Folder " + colors.FAIL + "[E]" + colors.ENDC)
+
     time.sleep(1)
-    print(colors.OKBLUE + "[!]" + colors.ENDC + " Encryption Complete " + colors.OKBLUE + "[!]" + colors.ENDC)
+    print(colors.WARNING + "[!]" + colors.ENDC + " Encryption Complete " + colors.WARNING + "[!]" + colors.ENDC)
 
 def decrypt():
 
-    print(colors.OKBLUE + "[!]" + colors.ENDC + "Entered Decryption Mode" + colors.OKBLUE + "[!]" + colors.ENDC)
+    print(colors.WARNING + "[!]" + colors.ENDC + " Entered Decryption Mode " + colors.WARNING + "[!]" + colors.ENDC)
 
     # Find some files
     files = []
@@ -93,20 +106,28 @@ def decrypt():
     # Ask the directory to scan
     directory_path = str(input("Path of Folder to Decrypt" + colors.OKBLUE + " ->  " + colors.ENDC))
 
+    if os.path.isdir(str(directory_path)) == False:
+        print(colors.FAIL + "[E]" + colors.ENDC + " Error Getting Directory " + colors.FAIL + "[E]" + colors.ENDC)
+        exit()
+
     # Iterate through each item in the specified directory
     files_found = 0
-    print("Scanning...")
+    print(colors.WARNING +  "[!]" + colors.ENDC + " Scanning... " + colors.WARNING +  "[!]" + colors.ENDC)
     for root, _, file_names in os.walk(directory_path):
         for file_name in file_names:
             file_path = os.path.join(root, file_name)
             files.append(file_path)
             files_found += 1
-            print(colors.OKBLUE + f"[{files_found}]" + colors.ENDC + f" {file_path}")
+            print(colors.OKBLUE + f"  [{files_found}]" + colors.ENDC + f" {file_path}")
 
-    print(f"Found " + colors.OKBLUE + str(files_found) + colors.ENDC + " file(s).")
+    print(colors.WARNING +  "[!]" + colors.ENDC + f" Found " + colors.OKBLUE + str(files_found) + colors.ENDC + " file(s). " + colors.WARNING +  "[!]" + colors.ENDC)
+
+    if files_found > 1000:
+        print(colors.WARNING + "[!]" + colors.ENDC + " Over " + colors.OKBLUE + "1000" + colors.ENDC + " files found. Continue with caution " + colors.WARNING + "[!]" + colors.ENDC)
+
 
     # Confirmation dialog
-    confirmiation = str(input("Do you want to continue? " + colors.OKBLUE + "All" + colors.ENDC + " the files and folders in " + colors.OKBLUE + f"{directory_path}" + colors.ENDC + " will be Decrypted. " + colors.OKBLUE + "[y/n] " + colors.ENDC))
+    confirmiation = str(input("Do you want to continue? " + colors.OKBLUE + "All" + colors.ENDC + " the " + colors.OKBLUE + f"{files_found}" + colors.ENDC + " files in " + colors.OKBLUE + f"{directory_path}" + colors.ENDC + " will be Decrypted. " + colors.OKBLUE + "[y/n] " + colors.ENDC))
 
     if confirmiation == "n":
         print(colors.FAIL + "Aborting..." + colors.ENDC)
@@ -120,12 +141,12 @@ def decrypt():
             key = key.read()
 
     except FileNotFoundError:
-        print(colors.FAIL + "[!]" + colors.ENDC + "Key File Not Found" + colors.FAIL + "[!]" + colors.ENDC)
+        print(colors.FAIL + "[E]" + colors.ENDC + " Key File Not Found. Make sure it is in the same folder as this script " + colors.FAIL + "[E]" + colors.ENDC)
         exit()
-    print("Fernet Key file found. Located at [" + colors.OKBLUE + "./fernet_key.key" + colors.ENDC + "]")
+    print(colors.WARNING +  "[!]" + colors.ENDC + " Fernet Key file found. Located at " + colors.OKBLUE + "[./fernet_key.key] " + colors.ENDC + colors.WARNING +  "[!]" + colors.ENDC)
 
     time.sleep(1)
-    print(colors.OKBLUE + "[!]" + colors.ENDC + " Starting Decryption " + colors.OKBLUE + "[!]" + colors.ENDC)
+    print(colors.WARNING + "[!]" + colors.ENDC + " Starting Decryption " + colors.WARNING + "[!]" + colors.ENDC)
     time.sleep(1)
 
     # Iterate over each file and extract content for decryption
@@ -135,7 +156,7 @@ def decrypt():
             with open(file, "rb") as thefile:
                 # Save the contents of the file
                 print(
-                    colors.OKBLUE + f"[{file_count}]" + colors.ENDC + f" Starting Decryption on " + colors.OKBLUE + f"[{file}]" + colors.ENDC + " ")
+                    colors.OKBLUE + f"  [{file_count}]" + colors.ENDC + f" Starting Decryption on " + colors.OKBLUE + f"[{file}]" + colors.ENDC + " ")
                 contents = thefile.read()
 
             # decrypt them
@@ -144,30 +165,32 @@ def decrypt():
             # Rewrite the encrypted content to the file
             with open(file, "wb") as thefile:
                 thefile.write(contents_decrypted)
-                print(colors.OKBLUE + f"[{file_count}]" + colors.ENDC + f" File " + colors.OKBLUE + f"[{file}]" + colors.ENDC + " Successfully Decrypted")
+                print(colors.OKBLUE + f"  [{file_count}]" + colors.ENDC + f" File " + colors.OKBLUE + f"[{file}]" + colors.ENDC + " Successfully Decrypted")
                 file_count += 1
 
-        except Exception as e:
+        except PermissionError as e:
+            print(colors.FAIL + "  [E]" + colors.ENDC + f" Failed to Decrypt " + colors.OKBLUE + f" [{file}]" + colors.ENDC + " -> Permission Error " + colors.FAIL + "[E]" + colors.ENDC)
+        except OSError as e:
             print(
-                colors.FAIL + "[!]" + colors.ENDC + f"Failed to Decrypt [{file}]x`: {e}" + colors.FAIL + "[!]" + colors.ENDC)
+                colors.FAIL + "  [E]" + colors.ENDC + f" Failed to Decrypt " + colors.OKBLUE + f" [{file}]" + colors.ENDC + " -> Read-only File/Folder " + colors.FAIL + "[E]" + colors.ENDC)
 
     time.sleep(1)
-    print(colors.OKBLUE + "[!]" + colors.ENDC + " Decryption Complete " + colors.OKBLUE + "[!]" + colors.ENDC)
+    print(colors.WARNING + "[!]" + colors.ENDC + " Decryption Complete " + colors.WARNING + "[!]" + colors.ENDC)
 
 def info():
 
     # General overview
     print("")
-    print(colors.WARNING + "[!]" + colors.ENDC + "OVERVIEW" + colors.WARNING + "[!]" + colors.ENDC)
+    print(colors.WARNING + "[!]" + colors.ENDC + " OVERVIEW " + colors.WARNING + "[!]" + colors.ENDC)
     print("""   A simple CLI application written in python that encrypts/decrypts data with a custom Fernet key. Obviously 
    """ + colors.WARNING +  "DO NOT" + colors.ENDC + """ use this app for real world security implementations. It is not 100% secure or reliable. Make sure that the data your
    encrypting is """ + colors.WARNING + "NOT IMPORTANT" + colors.ENDC +  """ as the the decryption process can be glitchy sometimes and result in data loss or corruption.""")
-    print("Link to Github Repository -> " + colors.OKBLUE + "" + colors.ENDC)
+    print("   Link to Github Repository -> " + colors.OKBLUE + "https://github.com/RootNode404/Encrypter-Decrypter" + colors.ENDC)
 
 
     # Terms and conditions
     print("")
-    print(colors.WARNING + "[!]" + colors.ENDC + "TERMS AND CONDITIONS" + colors.WARNING + "[!]" + colors.ENDC)
+    print(colors.WARNING + "[!]" + colors.ENDC + " TERMS AND CONDITIONS " + colors.WARNING + "[!]" + colors.ENDC)
     print("  By using this application you accept to the following terms and conditions:")
     print(colors.OKBLUE + "    [1]" + colors.ENDC + " I am not responsible for any loss or corruption of data")
     print(colors.OKBLUE + "    [2]" + colors.ENDC + " Nor am I not responsible for any illegal use of this application")
