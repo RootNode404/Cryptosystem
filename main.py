@@ -1,9 +1,9 @@
+# Made by RootNode404
+# Project Link: https://github.com/RootNode404/Encrypter-Decrypter
+# Sorry for the lack of comments
+
 from cryptography.fernet import Fernet
 import os, time
-
-# Supress warnings
-import warnings
-warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
 class colors:
@@ -199,9 +199,9 @@ try:
     ______                                         _                 
    |  ____|                                       | |                
    | |__     _ __     ___   _ __   _   _   _ __   | |_    ___   _ __ 
-   |  __|   | '_ \   / __| | '__| | | | | | '_ \  | __|  / _ \ | '__|
+   |  __|   | '_ \\   / __| | '__| | | | | | '_ \\  | __|  / _ \\ | '__|
    | |____  | | | | | (__  | |    | |_| | | |_) | | |_  |  __/ | |   
-   |______| |_| |_|  \___| |_|     \__, | | .__/   \__|  \___| |_|   
+   |______| |_| |_|  \\___| |_|     \\__, | | .__/   \\__|  \\___| |_|   
                                     __/ | | |                        
                                    |___/  |_|                        
 """ + colors.ENDC)
