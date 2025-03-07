@@ -1,5 +1,3 @@
-from typing import ReadOnly
-
 from cryptography.fernet import Fernet
 import os, time
 
