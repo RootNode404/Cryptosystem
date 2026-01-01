@@ -185,15 +185,6 @@ def info():
    encrypting is """ + colors.WARNING + "NOT IMPORTANT" + colors.ENDC +  """ as the the decryption process can be glitchy sometimes and result in data loss or corruption.""")
     print("   Link to Github Repository -> " + colors.OKBLUE + "https://github.com/RootNode404/Encrypter-Decrypter" + colors.ENDC)
 
-
-    # Terms and conditions
-    print("")
-    print(colors.WARNING + "[!]" + colors.ENDC + " TERMS AND CONDITIONS " + colors.WARNING + "[!]" + colors.ENDC)
-    print("  By using this application you accept to the following terms and conditions:")
-    print(colors.OKBLUE + "    [1]" + colors.ENDC + " I am not responsible for any loss or corruption of data")
-    print(colors.OKBLUE + "    [2]" + colors.ENDC + " Nor am I not responsible for any illegal use of this application")
-    print(colors.OKBLUE + "    [3]" + colors.ENDC + " And you have to star my Github Repository for this project;)")
-
 try:
     print(colors.OKBLUE + colors.BOLD + """
     ______                                         _                 
